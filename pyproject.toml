@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "lmax-sdk"
+version = "0.0.0"
+description = "Python SDK for LMAX Global"
+readme = "README.md"
+homepage = "https://github.com/adradr/lmax-sdk"
+authors = ["Adrian Lenard <adrian.lenard@me.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+#python = "^3.12"
+requests = "*"
+pdoc = "*"
+
+[tool.poetry.dev-dependencies]
+# Add your development dependencies here
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.urls]
+Homepage = "https://github.com/adradr/lmax-python-sdk.git"
