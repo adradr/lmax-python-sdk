@@ -1,9 +1,9 @@
 [tool.poetry]
-name = "lmax-sdk"
+name = "lmax-python-sdk"
 version = "0.0.0"
 description = "Python SDK for LMAX Global"
 readme = "README.md"
-homepage = "https://github.com/adradr/lmax-sdk"
+homepage = "https://github.com/adradr/lmax-python-sdk"
 authors = ["Adrian Lenard <adrian.lenard@me.com>"]
 license = "MIT"
 

@@ -51,7 +51,7 @@ jobs:
     needs: bump-version
     environment:
       name: pypi
-      url: https://pypi.org/p/lmax-sdk
+      url: https://pypi.org/p/lmax-python-sdk
     permissions:
       id-token: write # IMPORTANT: this permission is mandatory for trusted publishing OpenID Connect (OIDC) tokens
       deployments: write

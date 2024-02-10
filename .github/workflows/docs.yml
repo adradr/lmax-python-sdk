@@ -22,7 +22,7 @@ jobs:
       # ADJUST THIS: install all dependencies (including pdoc)
       - run: pip install -e .
       # We use a custom build script for pdoc itself, ideally you just run `pdoc -o docs/ ...` here.
-      - run: pdoc --mermaid -o docs/ lmax_sdk/
+      - run: pdoc --mermaid -o docs/ lmax_python_sdk/
 
       - uses: actions/upload-pages-artifact@v3
         with:
