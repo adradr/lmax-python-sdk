@@ -551,7 +551,7 @@ class LMAXAccount(client.LMAXClient):
                     }
             ```
         """
-        endpoint = "/v1/account/trade-history"
+        endpoint = "/v1/account/trades"
         params = {
             "start_time": start_time,
             "end_time": end_time,
