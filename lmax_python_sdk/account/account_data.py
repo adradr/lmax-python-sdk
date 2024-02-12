@@ -196,7 +196,7 @@ class LMAXAccount(client.LMAXClient):
             params["instrument_id"] = instrument_id
 
         endpoint += "?" + "&".join([f"{key}={value}" for key, value in params.items()])
-        return self._request(endpoint, method="GET", authenticated=True)
+        return self._request(endpoint, method="GET", params=params, authenticated=True)
 
     @validate_page_size
     @validate_after_before

@@ -155,7 +155,7 @@ class LMAXTrading(client.LMAXClient):
         if stop_loss_instruction_id is not None:
             payload["stop_loss_instruction_id"] = stop_loss_instruction_id
 
-        return self._request(endpoint, "POST", payload, authenticated=True)
+        return self._request(endpoint, "POST", payload=payload, authenticated=True)
 
     @validate_id_length("instruction_id")
     @validate_id_length("cancel_instruction_id")
@@ -204,7 +204,7 @@ class LMAXTrading(client.LMAXClient):
             "cancel_instruction_id": cancel_instruction_id,
             "instruction_id": instruction_id,
         }
-        return self._request(endpoint, "POST", payload, authenticated=True)
+        return self._request(endpoint, "POST", payload=payload, authenticated=True)
 
     @validate_side_type
     @validate_id_length("replacement_instruction_id")
@@ -261,7 +261,7 @@ class LMAXTrading(client.LMAXClient):
             "quantity": str(quantity),
             "price": str(price),
         }
-        return self._request(endpoint, "POST", payload, authenticated=True)
+        return self._request(endpoint, "POST", payload=payload, authenticated=True)
 
     @validate_id_length("cancel_instruction_id")
     def cancel_all_orders(
@@ -325,7 +325,7 @@ class LMAXTrading(client.LMAXClient):
         """
         endpoint = "/v1/account/cancel-all-orders"
         payload = {"cancel_instruction_id": cancel_instruction_id}
-        return self._request(endpoint, "POST", payload, authenticated=True)
+        return self._request(endpoint, "POST", payload=payload, authenticated=True)
 
     @validate_side_type
     @validate_id_length("closing_instruction_id")
@@ -383,7 +383,7 @@ class LMAXTrading(client.LMAXClient):
         }
         if instruction_id is not None:
             payload["instruction_id"] = instruction_id
-        return self._request(endpoint, "POST", payload, authenticated=True)
+        return self._request(endpoint, "POST", payload=payload, authenticated=True)
 
     @validate_id_length("instruction_id")
     @validate_id_length("closing_instruction_id")
@@ -436,7 +436,7 @@ class LMAXTrading(client.LMAXClient):
             "take_profit_offset": str(take_profit_offset),
             "take_profit_instruction_id": take_profit_instruction_id,
         }
-        return self._request(endpoint, "PUT", payload, authenticated=True)
+        return self._request(endpoint, "PUT", payload=payload, authenticated=True)
 
     @validate_id_length("instruction_id")
     def remove_take_profit(
@@ -476,7 +476,7 @@ class LMAXTrading(client.LMAXClient):
         """
         endpoint = "/v1/account/remove-take-profit"
         payload = {"instrument_id": instrument_id, "instruction_id": instruction_id}
-        return self._request(endpoint, "POST", payload, authenticated=True)
+        return self._request(endpoint, "POST", payload=payload, authenticated=True)
 
     @validate_id_length("instruction_id")
     def amend_stop_loss(
@@ -536,7 +536,7 @@ class LMAXTrading(client.LMAXClient):
             "stop_loss_instruction_id": stop_loss_instruction_id,
             "trigger_method": trigger_method,
         }
-        return self._request(endpoint, "PUT", payload, authenticated=True)
+        return self._request(endpoint, "PUT", payload=payload, authenticated=True)
 
     @validate_id_length("instruction_id")
     def remove_stop_loss(
@@ -575,4 +575,4 @@ class LMAXTrading(client.LMAXClient):
         """
         endpoint = "/v1/account/remove-stop-loss"
         payload = {"instrument_id": instrument_id, "instruction_id": instruction_id}
-        return self._request(endpoint, "POST", payload, authenticated=True)
+        return self._request(endpoint, "POST", payload=payload, authenticated=True)

@@ -114,6 +114,7 @@ class LMAXClient:
         self,
         endpoint: str,
         method="GET",
+        params: typing.Dict[str, str] = None,
         payload: typing.Dict[str, str] = None,
         authenticated: bool = False,
     ) -> typing.Dict[str, typing.Any]:
@@ -122,6 +123,7 @@ class LMAXClient:
         Args:
             endpoint (str): LMAX API endpoint to use.
             method (str, optional): HTTP Request method type. Defaults to "GET".
+            params (typing.Dict[str, str], optional): The parameters to send in the request. Defaults to None.
             payload (typing.Dict[str, str], optional): The data to send in the request. Defaults to None.
             authenticated (bool, optional): Flag indicating if the request requires authentication. Defaults to True.
 
@@ -140,6 +142,7 @@ class LMAXClient:
         response = requests.request(
             method,
             self.base_url + endpoint,
+            params=params,
             data=json.dumps(payload) if payload else None,
             headers=headers,
             timeout=5,
@@ -160,6 +163,7 @@ class LMAXClient:
             response = requests.request(  # Retry the request with the new token
                 method,
                 self.base_url + endpoint,
+                params=params,
                 data=json.dumps(payload) if payload else None,
                 headers=headers,
                 timeout=5,
