@@ -32,8 +32,8 @@ class LMAXClient:
 
     def __init__(
         self,
-        client_key_id: typing.Optional[str],
-        secret: typing.Optional[str],
+        client_key_id: typing.Optional[str] = None,
+        secret: typing.Optional[str] = None,
         base_url: BaseURLLiteral = None,
         rate_limit_seconds: int = 1,
         verbose: bool = False,
@@ -62,7 +62,7 @@ class LMAXClient:
         self.client_key_id = client_key_id
         self.secret = secret
         self.base_url = base_url
-        self.is_demo = True if "demo" in base_url else False
+        self.is_demo = True if "demo" in base_url.lower() else False
         self.rate_limit_seconds = rate_limit_seconds
         self.last_request_time = 0
 
@@ -114,7 +114,6 @@ class LMAXClient:
         self,
         endpoint: str,
         method="GET",
-        params: typing.Dict[str, str] = None,
         payload: typing.Dict[str, str] = None,
         authenticated: bool = False,
     ) -> typing.Dict[str, typing.Any]:
@@ -141,7 +140,6 @@ class LMAXClient:
         response = requests.request(
             method,
             self.base_url + endpoint,
-            params=params if params else None,
             data=json.dumps(payload) if payload else None,
             headers=headers,
             timeout=5,
@@ -162,7 +160,6 @@ class LMAXClient:
             response = requests.request(  # Retry the request with the new token
                 method,
                 self.base_url + endpoint,
-                params=params if params else None,
                 data=json.dumps(payload) if payload else None,
                 headers=headers,
                 timeout=5,
