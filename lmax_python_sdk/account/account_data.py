@@ -247,7 +247,7 @@ class LMAXAccount(client.LMAXClient):
         """
         endpoint = "/v1/account/working-orders"
         params = {"page_size": page_size, "after": after, "before": before}
-        return self._request(endpoint, method="GET", payload=params, authenticated=True)
+        return self._request(endpoint, method="GET", params=params, authenticated=True)
 
     @validate_page_size
     @validate_after_before
@@ -303,7 +303,7 @@ class LMAXAccount(client.LMAXClient):
         """
         endpoint = "/v1/account/order-positions"
         params = {"page_size": page_size, "after": after, "before": before}
-        return self._request(endpoint, method="GET", payload=params, authenticated=True)
+        return self._request(endpoint, method="GET", params=params, authenticated=True)
 
     def get_instrument_positions(
         self,
@@ -470,7 +470,7 @@ class LMAXAccount(client.LMAXClient):
             "before": before,
             "transaction_categories": transaction_categories,
         }
-        return self._request(endpoint, method="GET", payload=params, authenticated=True)
+        return self._request(endpoint, method="GET", params=params, authenticated=True)
 
     @validate_start_end_time
     @validate_page_size
@@ -560,4 +560,4 @@ class LMAXAccount(client.LMAXClient):
             "before": before,
             "order_information": order_information,
         }
-        return self._request(endpoint, method="GET", payload=params, authenticated=True)
+        return self._request(endpoint, method="GET", params=params, authenticated=True)

@@ -43,7 +43,7 @@ class LMAXMarketData(client.LMAXClient):
         """
         endpoint = f"/v1/marketdata/{instrument_id}"
         params = {"depth": depth}
-        return self._request(endpoint, payload=params, authenticated=True)
+        return self._request(endpoint, params=params, authenticated=True)
 
     def historic_closing_prices(
         self,
@@ -98,4 +98,4 @@ class LMAXMarketData(client.LMAXClient):
         if end_date:
             payload["end_date"] = end_date
 
-        return self._request(endpoint, payload=payload, authenticated=True)
+        return self._request(endpoint, params=payload, authenticated=True)

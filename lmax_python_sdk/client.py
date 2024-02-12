@@ -114,6 +114,7 @@ class LMAXClient:
         self,
         endpoint: str,
         method="GET",
+        params: typing.Dict[str, str] = None,
         payload: typing.Dict[str, str] = None,
         authenticated: bool = False,
     ) -> typing.Dict[str, typing.Any]:
@@ -140,6 +141,7 @@ class LMAXClient:
         response = requests.request(
             method,
             self.base_url + endpoint,
+            params=params if params else None,
             data=json.dumps(payload) if payload else None,
             headers=headers,
             timeout=5,
@@ -160,6 +162,7 @@ class LMAXClient:
             response = requests.request(  # Retry the request with the new token
                 method,
                 self.base_url + endpoint,
+                params=params if params else None,
                 data=json.dumps(payload) if payload else None,
                 headers=headers,
                 timeout=5,
