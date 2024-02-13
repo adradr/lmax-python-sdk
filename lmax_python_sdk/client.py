@@ -25,9 +25,6 @@ class LMAXClient:
     secret: typing.Optional[str]
     base_url: BaseURLLiteral
     token: str
-    instruments: typing.List[dict]
-    symbols: typing.List[str]
-    instrument_ids: typing.List[str]
     last_request_time: float
 
     def __init__(
@@ -39,8 +36,6 @@ class LMAXClient:
         verbose: bool = False,
     ):
         """Initialise the LMAXClient object. This will authenticate the client and store the token as an attribute.
-
-        Also store the instruments and their symbols as attributes.
 
         Args:
             client_key_id (str): LMAX API key
