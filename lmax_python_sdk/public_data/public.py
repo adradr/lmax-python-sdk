@@ -13,6 +13,7 @@ class LMAXPublicData(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, str]: Returned instrument level data
+
             ```
                 {
                     "instrument_id": "eur-usd",
@@ -36,6 +37,7 @@ class LMAXPublicData(client.LMAXClient):
 
         Returns:
         - typing.List[typing.Dict[str, str]]: List of instruments
+
             ```
                 [
                     {
@@ -97,6 +99,7 @@ class LMAXPublicData(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, typing.Union[str, typing.List[typing.Dict[str, str]]]]: Returned orderbook
+
             ```
                 {
                     "instrument_id": "eur-usd",
@@ -137,6 +140,7 @@ class LMAXPublicData(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, str]: Ticker for instrument
+
             ```
                 {
                     "instrument_id": "eur-usd",

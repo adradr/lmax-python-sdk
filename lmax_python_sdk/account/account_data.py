@@ -20,6 +20,7 @@ class LMAXAccount(client.LMAXClient):
         This endpoint belongs to the "query" rate limiting category and requires the "Account Information" scope.
 
         Returns: A dictionary containing instrument data with the following structure:
+
             ```
             {
                 "account_id": "1653445",
@@ -139,6 +140,7 @@ class LMAXAccount(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, str]: A dictionary containing the order state.
+
             ```
                 {
                     "account_id": "1653445",
@@ -218,6 +220,7 @@ class LMAXAccount(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, typing.Union[str, typing.List[dict]]]: A dictionary containing the working orders.
+
             ```
                 {
                     "before_cursor": "b8d3b51bd5b255857ef1c9164772efc759df2d61e33780c8f1e3593ec9e71cdad0f73851fa1863",
@@ -425,6 +428,7 @@ class LMAXAccount(client.LMAXClient):
 
         Returns:
         - dict: Account transactions.
+
             ```
                 {
                     "before_cursor": "b8d3b51bd5b255857ef1c9164772efc759df2d61e33780c8f1e3593ec9e71cdad0f73851fa1863",
@@ -505,6 +509,7 @@ class LMAXAccount(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, typing.Union[str, typing.List[dict]]]: Dictionary containing the trade history.
+
             ```
                 {
                     "before_cursor": "b8d3b51bd5b255857ef1c9164772efc759df2d61e33780c8f1e3593ec9e71cdad0f73851fa1863",

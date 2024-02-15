@@ -19,6 +19,7 @@ class LMAXMarketData(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, typing.Any]: The response from the LMAX API
+
         ```
                 {
                     "instrument_id": "eur-usd",
@@ -65,6 +66,7 @@ class LMAXMarketData(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, typing.Any]: The response from the LMAX API
+
         ```
                 {
                     "instrument_id": "eur-usd",

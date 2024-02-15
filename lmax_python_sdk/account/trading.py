@@ -68,6 +68,7 @@ class LMAXTrading(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, str]: The order details
+
         ```
                 {
                     "order_type": "MARKET",
@@ -176,6 +177,7 @@ class LMAXTrading(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, str]: The order details
+
         ```
                 {
                     "cancel_instruction_id": "cancel",
@@ -230,6 +232,7 @@ class LMAXTrading(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, str]: The order details
+
         ```
                 {
                     "order_type": "LIMIT",
@@ -276,6 +279,7 @@ class LMAXTrading(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, typing.Union[str, typing.List[typing.Dict[str, str]]]: The order details
+
         ```
                 {
                     "account_id": "1653445",
@@ -352,6 +356,7 @@ class LMAXTrading(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, str]: The order details
+
         ```
                 {
                     "closed_instruction_id": "instruction-1254",
@@ -405,6 +410,7 @@ class LMAXTrading(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, str]: The order details
+
         ```
                 {
                     "account_id": "1653445",
@@ -453,6 +459,7 @@ class LMAXTrading(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, str]: The order details
+
         ```
                 {
                     "account_id": "1653445",
@@ -504,6 +511,7 @@ class LMAXTrading(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, str]: The order details
+
         ```
                 {
                     "account_id": "1653445",
@@ -553,6 +561,7 @@ class LMAXTrading(client.LMAXClient):
 
         Returns:
         - typing.Dict[str, str]: The order details
+
         ```
                 {
                     "account_id": "1653445",
