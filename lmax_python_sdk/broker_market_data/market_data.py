@@ -59,9 +59,9 @@ class LMAXMarketData(client.LMAXClient):
         This endpoint belongs to the "Query" rate limiting category and requires "Account Information" scope.
 
         Args:
-        - instrument_id (str): _description_
-        - start_date (typing.Optional[str], optional): _description_. Defaults to None.
-        - end_date (typing.Optional[str], optional): _description_. Defaults to None.
+        - instrument_id (str): Instrument identifier
+        - start_date (typing.Optional[str], Data in the format "YYYY-MM-DD", optional. Defaults to None.
+        - end_date (typing.Optional[str], optional): Data in the format "YYYY-MM-DD", optional. Defaults to None.
 
         Returns:
         - typing.Dict[str, typing.Any]: The response from the LMAX API
