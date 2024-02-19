@@ -65,7 +65,7 @@ class LMAXPublicData(client.LMAXClient):
                 ]
             ```
         """
-        self._request(endpoint="/v1/instruments", authenticated=False)
+        return self._request(endpoint="/v1/instruments", authenticated=False)
 
     def get_current_time(self) -> typing.Dict[str, str]:
         """
