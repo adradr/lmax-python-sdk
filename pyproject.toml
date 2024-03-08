@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lmax-python-sdk"
-version = "1.0.7"
+version = "1.0.8"
 description = "Python SDK for LMAX Global"
 readme = "README.md"
 homepage = "https://github.com/adradr/lmax-python-sdk"
