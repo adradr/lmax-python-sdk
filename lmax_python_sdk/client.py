@@ -92,18 +92,27 @@ class LMAXClient:
         }
 
         headers = {"Content-Type": "application/json"}
-        response = requests.post(
-            self.base_url + endpoint,
-            data=json.dumps(payload),
-            headers=headers,
-            timeout=5,
-        )
 
-        if response.status_code == 200:
-            return response.json()["token"]
-        else:
-            # It's better to raise the HTTPError directly from the response
-            response.raise_for_status()
+        # Rate limit the authentication request
+        self.wait_for_rate_limit()
+
+        # Make the authentication request and handle HTTP errors (rate limit)
+        count = 0
+        while count < 3:
+            try:
+                response = requests.post(
+                    self.base_url + endpoint,
+                    data=json.dumps(payload),
+                    headers=headers,
+                    timeout=5,
+                )
+                if response.status_code == 200:
+                    return response.json()["token"]
+            except requests.exceptions.HTTPError as e:
+                print(e)
+                time.sleep(1)
+
+        raise ValueError("Failed to authenticate after 3 attempts")
 
     def _request(
         self,
@@ -125,10 +134,7 @@ class LMAXClient:
         Returns:
             typing.Dict[str, typing.Any]: The response from the LMAX API
         """
-        current_time = time.time()
-        time_diff = current_time - self.last_request_time
-        if time_diff < self.rate_limit_seconds:
-            time.sleep(self.rate_limit_seconds - time_diff)
+        self.wait_for_rate_limit()
 
         headers = {
             "Content-Type": "application/json",
@@ -155,6 +161,9 @@ class LMAXClient:
             headers["Authorization"] = (
                 f"Bearer {self.token}"  # Update headers with new token
             )
+
+            self.wait_for_rate_limit()
+
             response = requests.request(  # Retry the request with the new token
                 method,
                 self.base_url + endpoint,
@@ -173,3 +182,10 @@ class LMAXClient:
             return response.json()
         else:
             response.raise_for_status()
+
+    def wait_for_rate_limit(self):
+        """Function to wait for the rate limit to expire."""
+        current_time = time.time()
+        time_diff = current_time - self.last_request_time
+        if time_diff < self.rate_limit_seconds:
+            time.sleep(self.rate_limit_seconds - time_diff)
