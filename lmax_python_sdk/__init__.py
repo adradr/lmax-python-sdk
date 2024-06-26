@@ -8,6 +8,8 @@ This is a Python SDK for interacting with the LMAX trading platform. It provides
 from . import account
 from . import broker_market_data
 from . import public_data
+from . import client
+from . import ws_client
 from .validation import (
     ClientBaseURLType,
     TransactionCategory,
