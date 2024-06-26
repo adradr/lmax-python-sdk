@@ -11,6 +11,7 @@ license = "MIT"
 #python = "^3.12"
 requests = "*"
 pdoc = "*"
+websocket-client = "*"
 
 [tool.poetry.dev-dependencies]
 # Add your development dependencies here
