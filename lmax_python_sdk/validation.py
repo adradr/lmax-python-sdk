@@ -108,24 +108,24 @@ valid_side_types = [side_type.value for side_type in SideType]
 valid_trigger_methods = [trigger_method.value for trigger_method in TriggerMethodType]
 valid_time_in_forces = [time_in_force.value for time_in_force in TimeInForceType]
 
-BaseURLLiteral = typing.Literal[
-    *[url.value for url in ClientBaseURLType]  #  type: ignore
-]
+
+def get_literal_values(enum) -> typing.List[str]:
+    return [e.value for e in enum]
+
+
+BaseURLLiteral = typing.Literal[tuple(get_literal_values(ClientBaseURLType))]
+
 TransactionCategoryLiteral = typing.Literal[
-    *[category.value for category in TransactionCategory]  #  type: ignore
+    tuple(get_literal_values(TransactionCategory))
 ]
-OrderTypeLiteral = typing.Literal[
-    *[order_type.value for order_type in OrderType]  #  type: ignore
-]
-SideTypeLiteral = typing.Literal[
-    *[side_type.value for side_type in SideType]  #  type: ignore
-]
-TriggerMethodLiteral = typing.Literal[
-    *[trigger_method.value for trigger_method in TriggerMethodType]  #  type: ignore
-]
-TimeInForceLiteral = typing.Literal[
-    *[time_in_force.value for time_in_force in TimeInForceType]  #  type: ignore
-]
+
+OrderTypeLiteral = typing.Literal[tuple(get_literal_values(OrderType))]
+
+SideTypeLiteral = typing.Literal[tuple(get_literal_values(SideType))]
+
+TriggerMethodLiteral = typing.Literal[tuple(get_literal_values(TriggerMethodType))]
+
+TimeInForceLiteral = typing.Literal[tuple(get_literal_values(TimeInForceType))]
 
 
 class OrderPlacementError(Exception):
