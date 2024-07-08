@@ -30,6 +30,7 @@ class TypeEnum(enum.Enum, metaclass=TypeEnumMeta):
 
 
 class ClientBaseURLType(TypeEnum):
+    """Enum for the different base URLs for the LMAX API."""
 
     ACCOUNT_LONDON = "https://account-api.london.lmax.com"
     ACCOUNT_LONDON_PROFESSIONAL = "https://account-api.london-professional.lmax.com"
@@ -63,6 +64,8 @@ class ClientBaseURLType(TypeEnum):
 
 
 class TransactionCategory(TypeEnum):
+    """Enum for the different transaction categories."""
+
     BANK_TRANSFER_CURRENCY_CONVERSION = "BANK_TRANSFER_CURRENCY_CONVERSION"
     BASE_CURRENCY_SWEEP = "BASE_CURRENCY_SWEEP"
     COMMISSION = "COMMISSION"
@@ -78,6 +81,8 @@ class TransactionCategory(TypeEnum):
 
 
 class OrderType(TypeEnum):
+    """Enum for the different order types."""
+
     MARKET = "MARKET"
     LIMIT = "LIMIT"
     STOP = "STOP"
@@ -85,16 +90,22 @@ class OrderType(TypeEnum):
 
 
 class SideType(TypeEnum):
+    """Enum for the different side types."""
+
     BID = "BID"
     ASK = "ASK"
 
 
 class TriggerMethodType(TypeEnum):
+    """Enum for the different trigger methods."""
+
     ONE_TOUCH = "ONE_TOUCH"
     BID_OFFER = "BID_OFFER"
 
 
 class TimeInForceType(TypeEnum):
+    """Enum for the different time in forces."""
+
     FILL_OR_KILL = "FILL_OR_KILL"
     IMMEDIATE_OR_CANCEL = "IMMEDIATE_OR_CANCEL"
     GOOD_FOR_DAY = "GOOD_FOR_DAY"

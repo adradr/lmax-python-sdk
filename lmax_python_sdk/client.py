@@ -39,11 +39,11 @@ class LMAXClient:
         """Initialise the LMAXClient object. This will authenticate the client and store the token as an attribute.
 
         Args:
-            - client_key_id (str): LMAX API key
-            - secret (str): LMAX API secret
-            - base_url (_type_, optional): LMAX API endpoint to use.
-            - is_demo (bool, optional): Flag to use the demo endpoint url. Defaults to False.
-            - verbose (bool, optional): Flag to set verbose logging of requests and responses. Defaults to False.
+        - client_key_id (str): LMAX API key
+        - secret (str): LMAX API secret
+        - base_url (_type_, optional): LMAX API endpoint to use.
+        - is_demo (bool, optional): Flag to use the demo endpoint url. Defaults to False.
+        - verbose (bool, optional): Flag to set verbose logging of requests and responses. Defaults to False.
         """
 
         # Store the input parameters as attributes

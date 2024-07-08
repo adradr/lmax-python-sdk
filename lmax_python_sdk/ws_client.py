@@ -11,11 +11,11 @@ class LMAXWebSocketClient(LMAXClient):
         """Initializes the LMAXWebSocketClient object.
 
         Args:
-            - client_key_id (str): LMAX API key
-            - secret (str): LMAX API
-            - base_url (_type_, optional): LMAX API endpoint to use.
-            - rate_limit_seconds (int, optional): Rate limit in seconds. Defaults to 1.
-            - verbose (bool, optional): Flag to set verbose logging of requests and responses. Defaults to False.
+        - client_key_id (str): LMAX API key
+        - secret (str): LMAX API
+        - base_url (_type_, optional): LMAX API endpoint to use.
+        - rate_limit_seconds (int, optional): Rate limit in seconds. Defaults to 1.
+        - verbose (bool, optional): Flag to set verbose logging of requests and responses. Defaults to False.
         """
         super().__init__(*args, **kwargs)
         self.ws: typing.Union[None, websocket.WebSocketApp] = None
