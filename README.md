@@ -5,13 +5,16 @@ This is a Python SDK for interacting with the LMAX trading platform. It provides
 
 ## Modules
 ### Client
-The client module, located in `lmax_sdk/client.py`, provides the LMAXClient class for interacting with the LMAX API. It uses the `client_key_id` for authentication.
+The client module, located in `lmax_python_sdk/client.py`, provides the LMAXClient class for interacting with the LMAX API. It uses the `client_key_id` for authentication.
+
+### Websocket client
+Using the base client, the websocket client is located at `lmax_python_sdk/ws_client.py`. It provides easy access to the websocket streams by using the same argument format and authentication as the base client. 
 
 ### Validation
-The validation module, located in `lmax_sdk/validation.py`, provides various validation functions and constants. Contains different `enum` types for categorical input arguments.
+The validation module, located in `lmax_python_sdk/validation.py`, provides various validation functions and constants. Contains different `enum` types for categorical input arguments.
 
 ### Account
-The account module, located in `lmax_sdk/account`, provides functionality related to account data and trading.
+The account module, located in `lmax_python_sdk/account`, provides functionality related to account data and trading.
 
 ### Broker Market Data
 The broker allows to access the real-time and historical LMAX data for close prices and orderbook level data.
@@ -22,14 +25,15 @@ Not implemented.
 ## Example Usage
 Here are some examples of how to use these modules. For more depth take a look at the [docs page.](https://adradr.github.io/lmax-python-sdk/)
 
+### REST API
 ```
 import os
-import lmax_sdk
+import lmax_python_sdk
 
-lmax_client = lmax_sdk.account.account_data.LMAXAccount(
+lmax_client = lmax_python_sdk.account.account_data.LMAXAccount(
     client_key_id=os.getenv("LMAX_DEMO_API_KEY"),
     secret=os.getenv("LMAX_DEMO_API_SECRET"),
-    base_url=lmax_sdk.ClientBaseURLType.ACCOUNT_LONDON_DEMO,
+    base_url=lmax_python_sdk.ClientBaseURLType.ACCOUNT_LONDON_DEMO,
 )
 
 lmax_client.get_instrument_data_symbol("EUR/USD")
@@ -64,3 +68,15 @@ lmax_client.get_instrument_data_symbol("EUR/USD")
   'asset_class': 'CURRENCY'}]
 ```
 
+### Websocket
+During testing it did not work with a demo access (`INSUFFICIENT_PERMISSIONS`), not sure if it needs to be enabled but it has been tested with the production access and worked perfectly.
+```
+ws = lax_python_sdk.ws_client.LMAXWebSocketClient(
+    client_key_id=os.getenv("LMAX_API_KEY"),
+    secret=os.getenv("LMAX_API_SECRET"),
+    base_url=lmax_python_sdk.ClientBaseURLType.MARKET_DATA_LONDON_PROFESSIONAL,
+    verbose=True
+)
+ws.subscribe({"name": "TRADE", "instruments": ["eur-usd"]})
+ws.connect()
+```
