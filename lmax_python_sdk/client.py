@@ -6,6 +6,7 @@ import typing
 import hashlib
 import requests
 import datetime
+import logging
 from base64 import b64encode, b64decode
 from .validation import BaseURLLiteral, ClientBaseURLType
 
@@ -46,7 +47,7 @@ class LMAXClient:
         """
         # If base_url is not provided for live environment, raise an error
         if not base_url:
-            print(
+            self.logger.error(
                 "You need to provide the base_url for live environment. Please refer to the documentation for more information."
             )
             ClientBaseURLType.dict()
@@ -60,6 +61,13 @@ class LMAXClient:
         self.is_demo = True if "demo" in base_url.lower() else False
         self.rate_limit_seconds = rate_limit_seconds
         self.last_request_time = 0
+
+        log_level = logging.DEBUG if self.verbose else logging.INFO
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(log_level)
+        self.logger.addHandler(logging.StreamHandler())
+        formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+        self.logger.handlers[0].setFormatter(formatter)
 
         # Authenticate and store the token as an attribute
         if self.client_key_id and self.secret:
@@ -109,7 +117,7 @@ class LMAXClient:
                 if response.status_code == 200:
                     return response.json()["token"]
             except requests.exceptions.HTTPError as e:
-                print(e)
+                self.logger.error(e)
                 time.sleep(1)
 
         raise ValueError("Failed to authenticate after 3 attempts")
@@ -151,10 +159,10 @@ class LMAXClient:
         self.last_request_time = time.time()
 
         if self.verbose:
-            print(f"Request:    {method} {self.base_url + endpoint}")
-            print(f"Headers:    {headers}")
-            print(f"Payload:    {payload}")
-            print(f"Response:   {response.status_code} {response.text}")
+            self.logger.debug("Request:    %s", response.request.url)
+            self.logger.debug("Headers:    %s", response.request.headers)
+            self.logger.debug("Payload:    %s", response.request.body)
+            self.logger.debug("Response:   %s", response.text)
 
         if authenticated and response.status_code == 401:
             self.token = self._authenticate()  # Refresh token
@@ -173,10 +181,10 @@ class LMAXClient:
                 timeout=5,
             )
             if self.verbose:
-                print(f"Request (retry):    {method} {self.base_url + endpoint}")
-                print(f"Headers (retry):    {headers}")
-                print(f"Payload (retry):    {payload}")
-                print(f"Response (retry):   {response.status_code} {response.text}")
+                self.logger.debug("Request:    %s", response.request.url)
+                self.logger.debug("Headers:    %s", response.request.headers)
+                self.logger.debug("Payload:    %s", response.request.body)
+                self.logger.debug("Response:   %s", response.text)
 
         if response.status_code == 200:
             return response.json()
