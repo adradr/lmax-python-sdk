@@ -36,11 +36,11 @@ class LMAXWebSocketClient(LMAXClient):
         while True:
             self.ws.run_forever(ping_interval=30, ping_timeout=10)
             time.sleep(self.reconnect_delay)
-            print("Reconnecting WebSocket...")
+            self.logger.info("Reconnecting WebSocket...")
 
     def on_open(self, ws):
         """Callback executed when WebSocket connection is opened."""
-        print("WebSocket connection opened.")
+        self.logger.info("WebSocket connection opened.")
         with self.lock:
             if not self.is_subscribed:
                 for subscription in self.subscriptions:
@@ -49,32 +49,34 @@ class LMAXWebSocketClient(LMAXClient):
 
     def on_message(self, ws, message):
         """Callback executed when a message is received."""
-        print(f"Received raw message: {message}")
+        self.logger.debug("Received raw message: %s", message)
         try:
             data = json.loads(message)
-            print("Processed message:", data)
+            self.logger.debug("Processed message: %s", data)
         except json.JSONDecodeError as e:
-            print("Failed to decode message:", e)
+            self.logger.error("Failed to decode message: %s", e)
 
     def on_error(self, ws, error):
         """Callback executed when an error occurs."""
-        print("WebSocket error:", error)
+        self.logger.error("WebSocket error: %s", error)
 
     def on_close(self, ws, close_status_code, close_msg):
         """Callback executed when WebSocket connection is closed."""
-        print(
-            f"WebSocket connection closed with code: {close_status_code}, message: {close_msg}"
+        self.logger.info(
+            "WebSocket connection closed with code: %s, message: %s",
+            close_status_code,
+            close_msg,
         )
         self.is_subscribed = False
 
     def on_ping(self, ws, message):
         """Callback executed when a ping is received."""
-        print("Ping received")
+        self.logger.debug("Ping received")
         ws.send("", opcode=websocket.ABNF.OPCODE_PONG)
 
     def on_pong(self, ws, message):
         """Callback executed when a pong is received."""
-        print("Pong received")
+        self.logger.debug("Pong received")
 
     def subscribe(self, subscription):
         """Sends a subscribe message to the WebSocket."""
@@ -84,11 +86,10 @@ class LMAXWebSocketClient(LMAXClient):
         }
         if subscription not in self.subscriptions:
             self.subscriptions.append(subscription)
-            print(f"Added subscription: {subscription}")
-
+            self.logger.info("Added subscription: %s", subscription)
         if self.ws and self.ws.sock and self.ws.sock.connected:
             self.ws.send(json.dumps(message))
-            print(f"Sent subscription message: {json.dumps(message)}")
+            self.logger.info("Sent subscription message: %s", json.dumps(message))
 
     def unsubscribe(self, subscription):
         """Sends an unsubscribe message to the WebSocket."""
@@ -98,15 +99,15 @@ class LMAXWebSocketClient(LMAXClient):
         }
         if subscription in self.subscriptions:
             self.subscriptions.remove(subscription)
-            print(f"Removed subscription: {subscription}")
+            self.logger.info("Removed subscription: %s", subscription)
 
         if self.ws and self.ws.sock and self.ws.sock.connected:
             self.ws.send(json.dumps(message))
-            print(f"Sent unsubscription message: {json.dumps(message)}")
+            self.logger.info("Sent unsubscription message: %s", json.dumps(message))
 
     def close(self):
         """Closes the WebSocket connection."""
         if self.ws:
             self.ws.close()
             self.thread.join()
-            print("WebSocket closed and thread joined")
+            self.logger.info("WebSocket closed and thread joined")
