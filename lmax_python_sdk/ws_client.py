@@ -1,4 +1,5 @@
 import json
+import time
 import websocket
 import threading
 from .client import LMAXClient
@@ -11,6 +12,7 @@ class LMAXWebSocketClient(LMAXClient):
         self.subscriptions = []
         self.lock = threading.Lock()
         self.is_subscribed = False
+        self.reconnect_delay = 5  # seconds
 
     def connect(self):
         """Establishes a WebSocket connection and authenticates."""
@@ -25,8 +27,16 @@ class LMAXWebSocketClient(LMAXClient):
             on_pong=self.on_pong,
         )
         self.ws.on_open = self.on_open
-        self.thread = threading.Thread(target=self.ws.run_forever)
+        self.thread = threading.Thread(target=self._run_forever)
+        self.thread.daemon = True
         self.thread.start()
+
+    def _run_forever(self):
+        """Runs the WebSocket client in a loop to handle reconnections."""
+        while True:
+            self.ws.run_forever(ping_interval=30, ping_timeout=10)
+            time.sleep(self.reconnect_delay)
+            print("Reconnecting WebSocket...")
 
     def on_open(self, ws):
         """Callback executed when WebSocket connection is opened."""
