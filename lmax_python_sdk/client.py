@@ -45,13 +45,6 @@ class LMAXClient:
             is_demo (bool, optional): Flag to use the demo endpoint url. Defaults to False.
             verbose (bool, optional): Flag to set verbose logging of requests and responses. Defaults to False.
         """
-        # If base_url is not provided for live environment, raise an error
-        if not base_url:
-            self.logger.error(
-                "You need to provide the base_url for live environment. Please refer to the documentation for more information."
-            )
-            ClientBaseURLType.dict()
-            raise ValueError("You need to provide the base_url")
 
         # Store the input parameters as attributes
         self.verbose = verbose
@@ -68,6 +61,14 @@ class LMAXClient:
         self.logger.addHandler(logging.StreamHandler())
         formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
         self.logger.handlers[0].setFormatter(formatter)
+
+        # If base_url is not provided for live environment, raise an error
+        if not base_url:
+            self.logger.error(
+                "You need to provide the base_url for live environment. Please refer to the documentation for more information."
+            )
+            ClientBaseURLType.dict()
+            raise ValueError("You need to provide the base_url")
 
         # Authenticate and store the token as an attribute
         if self.client_key_id and self.secret:
