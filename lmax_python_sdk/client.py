@@ -39,11 +39,11 @@ class LMAXClient:
         """Initialise the LMAXClient object. This will authenticate the client and store the token as an attribute.
 
         Args:
-            client_key_id (str): LMAX API key
-            secret (str): LMAX API secret
-            base_url (_type_, optional): LMAX API endpoint to use.
-            is_demo (bool, optional): Flag to use the demo endpoint url. Defaults to False.
-            verbose (bool, optional): Flag to set verbose logging of requests and responses. Defaults to False.
+            - client_key_id (str): LMAX API key
+            - secret (str): LMAX API secret
+            - base_url (_type_, optional): LMAX API endpoint to use.
+            - is_demo (bool, optional): Flag to use the demo endpoint url. Defaults to False.
+            - verbose (bool, optional): Flag to set verbose logging of requests and responses. Defaults to False.
         """
 
         # Store the input parameters as attributes
@@ -134,11 +134,11 @@ class LMAXClient:
         """Function to make a request to the LMAX API.
 
         Args:
-            endpoint (str): LMAX API endpoint to use.
-            method (str, optional): HTTP Request method type. Defaults to "GET".
-            params (typing.Dict[str, str], optional): The parameters to send in the request. Defaults to None.
-            payload (typing.Dict[str, str], optional): The data to send in the request. Defaults to None.
-            authenticated (bool, optional): Flag indicating if the request requires authentication. Defaults to True.
+            - endpoint (str): LMAX API endpoint to use.
+            - method (str, optional): HTTP Request method type. Defaults to "GET".
+            - params (typing.Dict[str, str], optional): The parameters to send in the request. Defaults to None.
+            - payload (typing.Dict[str, str], optional): The data to send in the request. Defaults to None.
+            - authenticated (bool, optional): Flag indicating if the request requires authentication. Defaults to True.
 
         Returns:
             typing.Dict[str, typing.Any]: The response from the LMAX API
