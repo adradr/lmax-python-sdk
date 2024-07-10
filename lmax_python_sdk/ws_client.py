@@ -50,7 +50,7 @@ class LMAXWebSocketClient(LMAXClient):
     def _run_forever(self):
         """Runs the WebSocket client in a loop to handle reconnections."""
         while True:
-            self.ws.run_forever(ping_interval=30, ping_timeout=10)
+            self.ws.run_forever(ping_interval=10, ping_timeout=5, reconnect=5)
             time.sleep(self.reconnect_delay)
             self.logger.info("Reconnecting WebSocket...")
 
