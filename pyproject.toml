@@ -12,6 +12,7 @@ license = "MIT"
 requests = "*"
 pdoc = "*"
 websocket-client = "*"
+websockets = "*"
 pytest = "*"
 pytest-asyncio = "*"
 
