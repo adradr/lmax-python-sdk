@@ -12,6 +12,8 @@ license = "MIT"
 requests = "*"
 pdoc = "*"
 websocket-client = "*"
+pytest = "*"
+pytest-asyncio = "*"
 
 [tool.poetry.dev-dependencies]
 # Add your development dependencies here
