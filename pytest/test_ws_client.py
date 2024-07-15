@@ -91,7 +91,7 @@ async def test_websocket_client_normal_operation(websocket_server):
     # Wait for a bit to receive messages
     await asyncio.sleep(5)
 
-    assert client.is_subscribed
+    assert client.state == lmax_python_sdk.ws_client.WebSocketState.AUTHENTICATED
 
 
 @pytest.mark.asyncio
@@ -112,7 +112,7 @@ async def test_websocket_client_network_disconnect(websocket_server):
     # Wait for reconnection
     await asyncio.sleep(10)
 
-    assert client.is_subscribed
+    assert client.state == lmax_python_sdk.ws_client.WebSocketState.AUTHENTICATED
 
 
 @pytest.mark.asyncio
@@ -139,7 +139,7 @@ async def test_websocket_client_server_downtime(websocket_server):
     # Wait for reconnection
     await asyncio.sleep(20)
 
-    assert client.is_subscribed
+    assert client.state == lmax_python_sdk.ws_client.WebSocketState.AUTHENTICATED
 
 
 @pytest.mark.asyncio
@@ -160,7 +160,7 @@ async def test_websocket_client_side_error():
     # Wait for reconnection
     await asyncio.sleep(10)
 
-    assert client.is_subscribed
+    assert client.state == lmax_python_sdk.ws_client.WebSocketState.AUTHENTICATED
 
 
 if __name__ == "__main__":

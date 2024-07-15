@@ -1,9 +1,18 @@
 import json
 import time
+import enum
 import typing
 import websocket
 import threading
 from .client import LMAXClient
+
+
+class WebSocketState(enum.Enum):
+    DISCONNECTED = 1
+    CONNECTING = 2
+    CONNECTED = 3
+    AUTHENTICATING = 4
+    AUTHENTICATED = 5
 
 
 class LMAXWebSocketClient(LMAXClient):
@@ -18,19 +27,18 @@ class LMAXWebSocketClient(LMAXClient):
         - verbose (bool, optional): Flag to set verbose logging of requests and responses. Defaults to False.
         """
         super().__init__(*args, **kwargs)
-        self.subscriptions: list = []
-        self.lock: threading.Lock = threading.Lock()
-        self.is_subscribed: bool = False
-        self.reconnect_delay: int = 5  # seconds
+        self.state: WebSocketState = WebSocketState.DISCONNECTED
         self.ws_url = self.base_url.replace("https", "wss") + "/v1/web-socket"
         self.ws: typing.Optional[websocket.WebSocketApp] = None
-        self.is_refreshing_token = False
+        self.lock: threading.Lock = threading.Lock()
+        self.subscriptions: typing.List[str] = []
+        self.reconnect_delay: int = 5  # seconds
         self.should_run = True
 
     def connect(self):
         """Establishes a WebSocket connection and authenticates."""
-        self.should_run = True
-        while self.should_run:
+        self.state = WebSocketState.CONNECTING
+        while self.state != WebSocketState.AUTHENTICATED:
             try:
                 self.ws = websocket.WebSocketApp(
                     self.ws_url,
@@ -43,13 +51,33 @@ class LMAXWebSocketClient(LMAXClient):
                     on_open=self.on_open,
                     on_reconnect=self.on_reconnect,
                 )
+                self.state = WebSocketState.CONNECTED
+                self.token = self._authenticate()
+                self.state = WebSocketState.AUTHENTICATED
                 self.thread = threading.Thread(target=self._run_forever)
                 self.thread.daemon = True
                 self.thread.start()
                 break
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 self.logger.error("Error connecting WebSocket: %s", e)
                 time.sleep(self.reconnect_delay)
+
+    def close(self):
+        """Closes the WebSocket connection."""
+        self.should_run = False
+        if self.ws:
+            self.ws.close()
+            self.thread.join()
+            self.logger.info("WebSocket closed and thread joined")
+
+    def _refresh_token_and_reconnect(self):
+        try:
+            self.token = self._authenticate()
+            self.logger.info("Token refreshed successfully.")
+            self.reconnect_delay = 1
+            self.state = WebSocketState.AUTHENTICATED
+        except Exception as e:  # pylint: disable=broad-except
+            self.logger.error("Failed to refresh token: %s", e)
 
     def _run_forever(self):
         """Runs the WebSocket client in a loop to handle reconnections."""
@@ -58,14 +86,16 @@ class LMAXWebSocketClient(LMAXClient):
             time.sleep(self.reconnect_delay)
             self.logger.info("Reconnecting WebSocket...")
 
+    #############################################################################
+    # CALLBACKS #################################################################
+    #############################################################################
+
     def on_open(self, ws):
         """Callback executed when WebSocket connection is opened."""
         self.logger.info("WebSocket connection opened.")
         with self.lock:
-            if not self.is_subscribed:
-                for subscription in self.subscriptions:
-                    self.subscribe(subscription)
-                self.is_subscribed = True
+            for subscription in self.subscriptions:
+                self.subscribe(subscription)
 
     def on_message(self, ws, message):
         """Callback executed when a message is received."""
@@ -94,7 +124,6 @@ class LMAXWebSocketClient(LMAXClient):
             close_status_code,
             close_msg,
         )
-        self.is_subscribed = False
 
     def on_ping(self, ws, message):
         """Callback executed when a ping is received."""
@@ -106,29 +135,21 @@ class LMAXWebSocketClient(LMAXClient):
         self.logger.debug("Pong received")
 
     def on_reconnect(self, ws):
-        """Callback executed when WebSocket is reconnecting."""
         self.logger.info("WebSocket reconnecting...")
-        if not self.is_refreshing_token:
+        self.state = WebSocketState.CONNECTING
+        if self.state != WebSocketState.AUTHENTICATED:
+            self.logger.info("Refreshing token...")
             self._refresh_token_and_reconnect()
+            self._resubscribe()
 
-        if not self.is_subscribed:
-            with self.lock:
-                for subscription in self.subscriptions:
-                    self.subscribe(subscription)
-                self.is_subscribed = True
+    #############################################################################
+    # SUBSCRIPTIONS #############################################################
+    #############################################################################
 
-    def _refresh_token_and_reconnect(self):
-        """Refresh the authentication token and reconnect the WebSocket."""
-        self.is_refreshing_token = True
-        try:
-            self.token = self._authenticate()  # Refresh the token
-            self.logger.info("Token refreshed successfully.")
-        except Exception as e:  # pylint: disable=broad-except
-            self.logger.error("Failed to refresh token: %s", e)
-            time.sleep(self.reconnect_delay)
-            self._refresh_token_and_reconnect()
-        finally:
-            self.is_refreshing_token = False
+    def _resubscribe(self):
+        with self.lock:
+            for subscription in self.subscriptions:
+                self.subscribe(subscription)
 
     def subscribe(self, subscription):
         """Sends a subscribe message to the WebSocket."""
@@ -153,11 +174,3 @@ class LMAXWebSocketClient(LMAXClient):
         if self.ws and self.ws.sock and self.ws.sock.connected:
             self.ws.send(json.dumps(message))
             self.logger.info("Sent unsubscription message: %s", json.dumps(message))
-
-    def close(self):
-        """Closes the WebSocket connection."""
-        self.should_run = False
-        if self.ws:
-            self.ws.close()
-            self.thread.join()
-            self.logger.info("WebSocket closed and thread joined")
