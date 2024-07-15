@@ -78,6 +78,13 @@ class LMAXWebSocketClient(LMAXClient):
 
     def on_error(self, ws, error):
         """Callback executed when an error occurs."""
+        if isinstance(error, websocket.WebSocketBadStatusException):
+            if error.status_code == 401:
+                self.logger.error(
+                    "Error: 401 Unauthorized. Please check your authentication credentials."
+                )
+                self.on_reconnect(ws)
+
         self.logger.error("WebSocket error: %s", error)
 
     def on_close(self, ws, close_status_code, close_msg):
