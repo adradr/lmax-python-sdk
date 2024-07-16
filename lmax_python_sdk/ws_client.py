@@ -96,11 +96,10 @@ class LMAXWebSocketClient(LMAXClient):
         self._set_state(WebSocketState.CONNECTED)
         self.logger.info("WebSocket connection opened.")
         self._set_state(WebSocketState.AUTHENTICATED)
-        with self.lock:
-            # Resubscribe all existing subscriptions
-            for subscription in self.subscriptions:
-                self._send_subscription(subscription)
-            self._process_pending_subscriptions()
+
+        for subscription in self.subscriptions:
+            self._send_subscription(subscription)
+        self._process_pending_subscriptions()
 
     def on_message(self, ws, message):
         self.logger.debug("Received raw message: %s", message)
