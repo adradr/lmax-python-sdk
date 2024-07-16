@@ -44,17 +44,22 @@ class TestWebSocketServer:
         await self.server.wait_closed()
 
     def run(self):
-        asyncio.run(self.start())
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(self.start())
 
     def disconnect_clients(self):
         self.should_disconnect = True
 
     def shutdown_server(self):
         self.should_shutdown = True
-        for ws in self.clients:
+        for ws in list(self.clients):  # Iterate over a copy of the clients set
             asyncio.run_coroutine_threadsafe(ws.close(), asyncio.get_event_loop())
         if self.server:
             self.server.close()
+            asyncio.run_coroutine_threadsafe(
+                self.server.wait_closed(), asyncio.get_event_loop()
+            )
 
 
 @pytest.fixture(scope="module")
