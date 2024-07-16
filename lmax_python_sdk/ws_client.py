@@ -96,7 +96,11 @@ class LMAXWebSocketClient(LMAXClient):
         self._set_state(WebSocketState.CONNECTED)
         self.logger.info("WebSocket connection opened.")
         self._set_state(WebSocketState.AUTHENTICATED)
-        self._process_pending_subscriptions()
+        with self.lock:
+            # Resubscribe all existing subscriptions
+            for subscription in self.subscriptions:
+                self._send_subscription(subscription)
+            self._process_pending_subscriptions()
 
     def on_message(self, ws, message):
         self.logger.debug("Received raw message: %s", message)
@@ -108,14 +112,21 @@ class LMAXWebSocketClient(LMAXClient):
 
     def on_error(self, ws, error):
         self.logger.error("WebSocket error: %s", error)
-        if isinstance(error, websocket.WebSocketException):
-            if error.status_code == 401:
+
+        if isinstance(error, websocket.WebSocketConnectionClosedException):
+            self.logger.error("WebSocket connection closed. Attempting to reconnect...")
+            self._reconnect()
+        elif isinstance(error, websocket.WebSocketException):
+            if hasattr(error, "status_code") and error.status_code == 401:
                 self.logger.error(
                     "Error: 401 Unauthorized. Refreshing token and reconnecting."
                 )
                 self._reconnect()
             else:
-                self.logger.error("WebSocket bad status: %s", error.status_code)
+                self.logger.error("WebSocket error: %s", error)
+        else:
+            self.logger.error("Unexpected WebSocket error: %s", error)
+
         self._set_state(WebSocketState.DISCONNECTED)
 
     def on_close(self, ws, close_status_code, close_msg):
