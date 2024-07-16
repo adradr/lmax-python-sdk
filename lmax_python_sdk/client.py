@@ -107,6 +107,7 @@ class LMAXClient:
 
         # Make the authentication request and handle HTTP errors (rate limit)
         count = 0
+        backoff = 1
         while count < 3:
             try:
                 response = requests.post(
@@ -116,10 +117,21 @@ class LMAXClient:
                     timeout=5,
                 )
                 if response.status_code == 200:
+                    self.logger.info("Authenticated successfully")
                     return response.json()["token"]
+                elif response.status_code == 429:
+                    self.logger.error(
+                        "Received 429 Too Many Requests. Backing off for %s seconds.",
+                        backoff,
+                    )
+                    time.sleep(backoff)
+                    backoff = min(backoff * 2, 60)  # Exponential backoff with a cap
+                else:
+                    response.raise_for_status()
             except requests.exceptions.HTTPError as e:
                 self.logger.error(e)
                 time.sleep(1)
+            count += 1
 
         raise ValueError("Failed to authenticate after 3 attempts")
 
