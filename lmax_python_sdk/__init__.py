@@ -9,7 +9,8 @@ from . import account
 from . import broker_market_data
 from . import public_data
 from . import client
-from . import ws_client
+from . import ws_client_sync
+from . import ws_client_async
 from .validation import (
     ClientBaseURLType,
     TransactionCategory,
