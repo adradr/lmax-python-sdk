@@ -68,10 +68,10 @@ class LMAXWebSocketClient(LMAXClient):
         while self.should_run:
             try:
                 await self._ensure_connection()
-                self._process_queue()
                 await asyncio.gather(
                     self._handle_messages(),
                     self._heartbeat(),
+                    self._process_queue(),
                 )
             except websockets.ConnectionClosed:
                 self.logger.error("WebSocket connection closed unexpectedly.")
