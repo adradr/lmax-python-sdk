@@ -26,7 +26,7 @@ Not implemented.
 Here are some examples of how to use these modules. For more depth take a look at the [docs page.](https://adradr.github.io/lmax-python-sdk/)
 
 ### REST API
-```
+```python
 import os
 import lmax_python_sdk
 
@@ -69,9 +69,11 @@ lmax_client.get_instrument_data_symbol("EUR/USD")
 ```
 
 ### Websocket
-During testing it did not work with a demo access (`INSUFFICIENT_PERMISSIONS`), not sure if it needs to be enabled but it has been tested with the production access and worked perfectly.
-```
-ws = lax_python_sdk.ws_client.LMAXWebSocketClient(
+During testing it did not work with a demo access (`INSUFFICIENT_PERMISSIONS`), it needs to be enabled by LMAX support. The production access and worked perfectly.
+Websocket has been implemented in both sync and async. The sync version uses `threading` and `websocket` while the async mode uses the newer `websockets` and `asyncio` libraries to implement concurrency. During testing it seems that the sync version misses messages, which is not yet clear why happening, therefore the async version is to be tested if it works better and more reliably. 
+
+```python
+ws = lax_python_sdk.ws_client_sync.LMAXWebSocketClient(
     client_key_id=os.getenv("LMAX_API_KEY"),
     secret=os.getenv("LMAX_API_SECRET"),
     base_url=lmax_python_sdk.ClientBaseURLType.MARKET_DATA_LONDON_PROFESSIONAL,
@@ -79,4 +81,16 @@ ws = lax_python_sdk.ws_client.LMAXWebSocketClient(
 )
 ws.subscribe({"name": "TRADE", "instruments": ["eur-usd"]})
 ws.connect()
+```
+
+
+```python
+ws = lax_python_sdk.ws_client_async.LMAXWebSocketClient(
+    client_key_id=os.getenv("LMAX_API_KEY"),
+    secret=os.getenv("LMAX_API_SECRET"),
+    base_url=lmax_python_sdk.ClientBaseURLType.MARKET_DATA_LONDON_PROFESSIONAL,
+    verbose=True
+)
+await ws.subscribe({"name": "TRADE", "instruments": ["eur-usd"]})
+await ws.connect()
 ```
