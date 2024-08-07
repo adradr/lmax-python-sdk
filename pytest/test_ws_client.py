@@ -72,7 +72,17 @@ def websocket_server():
     server.shutdown_server()
 
 
-class TestLMAXWebSocketClient(lmax_python_sdk.ws_client.LMAXWebSocketClient):
+class TestLMAXWebSocketClientSync(lmax_python_sdk.ws_client_sync.LMAXWebSocketClient):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ws_url = "ws://localhost:8765"
+
+    def _authenticate(self):
+        """Override the authentication method for testing."""
+        return "valid_token"
+
+
+class TestLMAXWebSocketClientAsync(lmax_python_sdk.ws_client_async.LMAXWebSocketClient):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.ws_url = "ws://localhost:8765"
@@ -83,8 +93,8 @@ class TestLMAXWebSocketClient(lmax_python_sdk.ws_client.LMAXWebSocketClient):
 
 
 @pytest.mark.asyncio
-async def test_websocket_client_normal_operation(websocket_server):
-    client = TestLMAXWebSocketClient(
+async def test_websocket_client_normal_operation_sync(websocket_server):
+    client = TestLMAXWebSocketClientSync(
         client_key_id="test_key",
         secret="test_secret",
         base_url="ws://localhost:8765",
@@ -96,12 +106,12 @@ async def test_websocket_client_normal_operation(websocket_server):
     # Wait for a bit to receive messages
     await asyncio.sleep(5)
 
-    assert client.state == lmax_python_sdk.ws_client.WebSocketState.AUTHENTICATED
+    assert client.state == lmax_python_sdk.ws_client_sync.WebSocketState.AUTHENTICATED
 
 
 @pytest.mark.asyncio
-async def test_websocket_client_network_disconnect(websocket_server):
-    client = TestLMAXWebSocketClient(
+async def test_websocket_client_network_disconnect_sync(websocket_server):
+    client = TestLMAXWebSocketClientSync(
         client_key_id="test_key",
         secret="test_secret",
         base_url="ws://localhost:8765",
@@ -117,12 +127,12 @@ async def test_websocket_client_network_disconnect(websocket_server):
     # Wait for reconnection
     await asyncio.sleep(10)
 
-    assert client.state == lmax_python_sdk.ws_client.WebSocketState.AUTHENTICATED
+    assert client.state == lmax_python_sdk.ws_client_sync.WebSocketState.AUTHENTICATED
 
 
 @pytest.mark.asyncio
-async def test_websocket_client_server_downtime(websocket_server):
-    client = TestLMAXWebSocketClient(
+async def test_websocket_client_server_downtime_sync(websocket_server):
+    client = TestLMAXWebSocketClientSync(
         client_key_id="test_key",
         secret="test_secret",
         base_url="ws://localhost:8765",
@@ -144,12 +154,12 @@ async def test_websocket_client_server_downtime(websocket_server):
     # Wait for reconnection
     await asyncio.sleep(20)
 
-    assert client.state == lmax_python_sdk.ws_client.WebSocketState.AUTHENTICATED
+    assert client.state == lmax_python_sdk.ws_client_sync.WebSocketState.AUTHENTICATED
 
 
 @pytest.mark.asyncio
-async def test_websocket_client_side_error():
-    client = TestLMAXWebSocketClient(
+async def test_websocket_client_side_error_sync():
+    client = TestLMAXWebSocketClientSync(
         client_key_id="test_key",
         secret="test_secret",
         base_url="ws://localhost:8765",
@@ -165,7 +175,93 @@ async def test_websocket_client_side_error():
     # Wait for reconnection
     await asyncio.sleep(10)
 
-    assert client.state == lmax_python_sdk.ws_client.WebSocketState.AUTHENTICATED
+    assert client.state == lmax_python_sdk.ws_client_sync.WebSocketState.AUTHENTICATED
+
+
+@pytest.mark.asyncio
+async def test_websocket_client_normal_operation_async(websocket_server):
+    client = TestLMAXWebSocketClientAsync(
+        client_key_id="test_key",
+        secret="test_secret",
+        base_url="ws://localhost:8765",
+        verbose=True,
+    )
+    await client.subscribe({"name": "TRADE", "instruments": ["EUR-USD"]})
+    task = asyncio.create_task(client.connect())
+
+    # Wait for a bit to receive messages
+    await asyncio.sleep(5)
+
+    assert client.state == lmax_python_sdk.ws_client_async.WebSocketState.AUTHENTICATED
+
+
+@pytest.mark.asyncio
+async def test_websocket_client_network_disconnect_async(websocket_server):
+    client = TestLMAXWebSocketClientAsync(
+        client_key_id="test_key",
+        secret="test_secret",
+        base_url="ws://localhost:8765",
+        verbose=True,
+    )
+    await client.subscribe({"name": "TRADE", "instruments": ["EUR-USD"]})
+    task = asyncio.create_task(client.connect())
+
+    # Simulate network disconnect
+    websocket_server.disconnect_clients()
+
+    # Wait for reconnection
+    await asyncio.sleep(10)
+
+    assert client.state == lmax_python_sdk.ws_client_async.WebSocketState.AUTHENTICATED
+
+
+@pytest.mark.asyncio
+async def test_websocket_client_server_downtime_async(websocket_server):
+    client = TestLMAXWebSocketClientAsync(
+        client_key_id="test_key",
+        secret="test_secret",
+        base_url="ws://localhost:8765",
+        verbose=True,
+    )
+    await client.subscribe({"name": "TRADE", "instruments": ["EUR-USD"]})
+    task = asyncio.create_task(client.connect())
+
+    # Simulate server downtime
+    websocket_server.shutdown_server()
+    await asyncio.sleep(5)
+
+    # Restart server
+    websocket_server.should_shutdown = False
+    server_thread = threading.Thread(target=websocket_server.run, daemon=True)
+    server_thread.start()
+    await asyncio.sleep(5)
+
+    # Wait for reconnection
+    await asyncio.sleep(10)
+
+    assert client.state == lmax_python_sdk.ws_client_async.WebSocketState.AUTHENTICATED
+
+
+@pytest.mark.asyncio
+async def test_websocket_client_side_error_async():
+    client = TestLMAXWebSocketClientAsync(
+        client_key_id="test_key",
+        secret="test_secret",
+        base_url="ws://localhost:8765",
+        verbose=True,
+    )
+    await client.subscribe({"name": "TRADE", "instruments": ["EUR-USD"]})
+    task = asyncio.create_task(client.connect())
+    await asyncio.sleep(5)
+
+    # Simulate client-side error by closing the WebSocket abruptly
+    await client.ws.close()
+    await asyncio.sleep(5)
+
+    # Wait for reconnection
+    await asyncio.sleep(10)
+
+    assert client.state == lmax_python_sdk.ws_client_async.WebSocketState.AUTHENTICATED
 
 
 if __name__ == "__main__":
